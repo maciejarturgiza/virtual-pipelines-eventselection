@@ -2,13 +2,13 @@ name: example
 on: push
 
 jobs:
-  greeting:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo hello world
+  #greeting:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - run: echo hello world
 
   build_skim:
-    needs: greeting
+    # needs: greeting
     runs-on: ubuntu-latest
     container: rootproject/root:${{ matrix.version }}
     strategy:
@@ -28,25 +28,25 @@ jobs:
         with:
           name: skim${{ matrix.version }}
           path: skim
-  build_skim_latest:
-    runs-on: ubuntu-latest
-    container: rootproject/root:${{ matrix.version }}
-    continue-on-error: ${{ matrix.allow_failure }}
-    strategy:
-      matrix:
-        version: [6.26.10-conda]
-        allow_failure: [false]
-        include:
-          - version: latest
-            allow_failure: true
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: latest
-        run: |
-          COMPILER=$(root-config --cxx)
-          FLAGS=$(root-config --cflags --libs)
-          $COMPILER -g -O3 -Wall -Wextra -Wpedantic -o skim skim.cxx $FLAGS
+  # build_skim_latest:
+  #   runs-on: ubuntu-latest
+  #   container: rootproject/root:${{ matrix.version }}
+  #   continue-on-error: ${{ matrix.allow_failure }}
+  #   strategy:
+  #     matrix:
+  #       version: [6.26.10-conda]
+  #       allow_failure: [false]
+  #       include:
+  #         - version: latest
+  #           allow_failure: true
+  #  steps:
+  #    - name: checkout repository
+  #      uses: actions/checkout@v4
+  #    - name: latest
+  #      run: |
+  #        COMPILER=$(root-config --cxx)
+  #        FLAGS=$(root-config --cflags --libs)
+  #        $COMPILER -g -O3 -Wall -Wextra -Wpedantic -o skim skim.cxx $FLAGS
   skim:
     needs: build_skim
     runs-on: ubuntu-latest
