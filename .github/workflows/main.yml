@@ -115,4 +115,7 @@ jobs:
         run: python tests/test_cutflow_ggH.py
         
       - name: plot test
-        run: python tests/test_plot_ggH.py         
+        run: python tests/test_plot_ggH.py        
+      
+      - name: mean test
+        run: python tests/test_mean_ggH.py   
