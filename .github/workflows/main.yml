@@ -60,4 +60,5 @@ jobs:
           name: skim6.26.10-conda
 
       - name: skim
-        run: ./skim
+        run: chmod +x ./skim
+        ./skim
