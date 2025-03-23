@@ -10,16 +10,23 @@ jobs:
   build_skim:
     needs: greeting
     runs-on: ubuntu-latest
-    container: rootproject/root:6.26.10-conda
+    container: rootproject/root:${{ matrix.version }}
+    strategy:
+      matrix:
+        version: [6.26.10-conda, latest]
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
+	
       - name: build
         run: |
           COMPILER=$(root-config --cxx)
           FLAGS=$(root-config --cflags --libs)
           $COMPILER -g -O3 -Wall -Wextra -Wpedantic -o skim skim.cxx $FLAGS
-
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skim${{ matrix.version }}
+          path: skim
   build_skim_latest:
     runs-on: ubuntu-latest
     container: rootproject/root:${{ matrix.version }}
@@ -47,5 +54,9 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v4
 
+      - uses: actions/download-artifact@v4
+        with:
+          name: skim6.26.10-conda
+	  
       - name: skim
         run: ./skim
