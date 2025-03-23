@@ -16,8 +16,8 @@ jobs:
         version: [6.26.10-conda, latest]
     steps:
       - name: checkout repository
-        uses: actions/checkout@v4
-	
+      uses: actions/checkout@v4
+
       - name: build
         run: |
           COMPILER=$(root-config --cxx)
