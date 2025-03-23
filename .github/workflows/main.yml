@@ -57,7 +57,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: skim6.26.10
+          name: skim6.26.10-conda
 
       - name: skim
         run: |
