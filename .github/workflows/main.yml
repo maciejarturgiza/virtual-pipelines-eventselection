@@ -81,7 +81,7 @@ jobs:
         
       - uses: actions/download-artifact@v4
         with:
-          name: skim_ggH.root
+          name: skim_ggH
       
       - name: plot
         run: |
