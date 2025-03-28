@@ -67,10 +67,20 @@ jobs:
       - name: access control
         run: echo ${{ secrets.USER_PASS }} | kinit ${{ secrets.USER_NAME }}@CERN.CH
 
+      - name: Extract skim executable
+        run: |
+          docker cp $(docker create ghcr.io/${{ github.repository }}/cms-analysis:latest):/analysis/skim ./skim
+          chmod +x ./skim
+
       - name: skim
         run: |
           chmod +x ./skim
           ./skim root://eosuser.cern.ch//eos/user/g/gstark/AwesomeWorkshopFeb2020/GluGluToHToTauTau.root skim_ggH.root 19.6 11467.0 0.1 > skim_ggH.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: skim
+          path: ./skim
+          retention-days: 1    
       - uses: actions/upload-artifact@v4
         with:
           name: skim_ggH
