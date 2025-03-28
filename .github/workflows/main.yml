@@ -69,7 +69,7 @@ jobs:
 
       - name: Extract skim executable
         run: |
-          docker cp $(docker create ghcr.io/${{ github.repository }}/cms-analysis:latest):/analysis/skim ./skim
+          cp /analysis/skim ./skim
           chmod +x ./skim
 
       - name: skim
