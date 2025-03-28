@@ -21,8 +21,7 @@ RUN pip3 install --no-cache-dir \
     pandas
 
 # Copy analysis scripts and code
-COPY skim.sh histograms.sh plot.sh fit.sh ./
-COPY src/ /analysis/src/
+COPY . /analysis/
 
 # Make scripts executable
 RUN chmod +x *.sh
