@@ -7,27 +7,35 @@ jobs:
   #  steps:
   #    - run: echo hello world
 
-  build_skim:
-    # needs: greeting
+  build-docker-image:
     runs-on: ubuntu-latest
-    container: rootproject/root:${{ matrix.version }}
-    strategy:
-      matrix:
-        version: [6.26.10-conda]
-
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: build
-        run: |
-          COMPILER=$(root-config --cxx)
-          FLAGS=$(root-config --cflags --libs)
-          $COMPILER -g -O3 -Wall -Wextra -Wpedantic -o skim skim.cxx $FLAGS
-      - uses: actions/upload-artifact@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          name: skim${{ matrix.version }}
-          path: skim
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/cms-analysis:latest
+            ghcr.io/${{ github.repository }}/cms-analysis:${{ github.sha }}
+
+
   # build_skim_latest:
   #   runs-on: ubuntu-latest
   #   container: rootproject/root:${{ matrix.version }}
@@ -50,7 +58,8 @@ jobs:
   skim:
     needs: build_skim
     runs-on: ubuntu-latest
-    container: rootproject/root:6.26.10-conda
+    container: 
+      image: ghcr.io/${{ github.repository }}/cms-analysis:latest
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -76,7 +85,8 @@ jobs:
   plot:
     needs: skim
     runs-on: ubuntu-latest
-    container: rootproject/root:6.26.10-conda
+    container:
+      image: ghcr.io/${{ github.repository }}/cms-analysis:latest
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
@@ -96,7 +106,8 @@ jobs:
   test:
     needs: plot
     runs-on: ubuntu-latest
-    container: rootproject/root:6.26.10-conda
+    container:
+      image: ghcr.io/${{ github.repository }}/cms-analysis:latest
     steps: 
       - name: checkout repository
         uses: actions/checkout@v4
