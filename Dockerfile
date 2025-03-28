@@ -1,9 +1,7 @@
 FROM rootproject/root:6.26.10-conda
 
-# Set working directory
 WORKDIR /analysis
 
-# Install system dependencies
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
@@ -13,21 +11,22 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install any Python dependencies
 RUN pip3 install --no-cache-dir \
     numpy \
     matplotlib \
     scipy \
     pandas
 
-# Copy analysis scripts and code
 COPY . /analysis/
 
-# Make scripts executable
+RUN if [ -f skim.cxx ]; then \
+    COMPILER=$(root-config --cxx) && \
+    FLAGS=$(root-config --cflags --libs) && \
+    $COMPILER -g -O3 -Wall -Wextra -Wpedantic -o skim skim.cxx $FLAGS; \
+    fi
+    
 RUN chmod +x *.sh
 
-# Set default working directory
 WORKDIR /analysis
 
-# Optional: set default command
 CMD ["/bin/bash"]
