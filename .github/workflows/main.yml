@@ -64,10 +64,6 @@ jobs:
       - name: checkout repository
         uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
-        with:
-          name: skim6.26.10-conda
-
       - name: access control
         run: echo ${{ secrets.USER_PASS }} | kinit ${{ secrets.USER_NAME }}@CERN.CH
 
